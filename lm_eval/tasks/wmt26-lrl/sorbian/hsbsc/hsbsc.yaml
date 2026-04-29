@@ -6,8 +6,8 @@ dataset_kwargs:
     test: llms-limited-resources2026-private/Sorbian/hsb/SC/HSB_sc_dev.jsonl
     # test: https://raw.githubusercontent.com/TUM-NLP/llms-limited-resources2026-private/refs/heads/main/Sorbian/dsb/SC/DSB_sc_dev.jsonl?token=GHSAT0AAAAAADQADRFMDRL6Q6DHM7RVAA3K2PKJJPQ
 test_split: test
-doc_to_text: "Correct this sentence. Put it in this format <corrected> Lower Sorbian translation </corrected>.\n<sentence> {{corrupted_sentence}} </sentence>"
-doc_to_target: "{{original_sentence}}"
+doc_to_text: "Identify and correct the corrupted word in the sentence. The sentence could also be correct, in which case, output <wrong> CORRECT </wrong>, <corrected> CORRECT </corrected>. Put the answer in this format <wrong> wrong word </wrong>, <corrected> correct word </corrected>.\n<sentence> {{corrupted_sentence}} </sentence>"
+doc_to_target: "{{incorrect_word}}, {{correct_word}}"
 generation_kwargs:
   until:
     - "</corrected>"
@@ -23,10 +23,10 @@ filter_list:
   - name: "remove_tags"
     filter:
       - function: "regex"
-        regex_pattern: "<corrected> (.*)"
+        regex_pattern: "<wrong> (.*)"
       - function: "take_first"
 metric_list:
-  - metric: bleu
+  - metric: acc
   - metric: chrf
 metadata:
   version: 0.0
