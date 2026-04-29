@@ -6,7 +6,7 @@ dataset_kwargs:
     test: llms-limited-resources2026-private/Ukrainian/QA/ukr_mmlu_qa_dev.json
 test_split: test
 output_type: multiple_choice
-doc_to_text: "Question:\n{{question.strip()}}\n\nPossible answers:\n{{possible_answers.strip()}}\n\nAnswer:"
+doc_to_text: "Question:\n{{question.strip()}}\n\nPossible answers:\n{{answers.strip()}}\n\nAnswer:"
 doc_to_choice: [0, 1, 2, 3]
 doc_to_target: "{{correct_answers}}"
 metric_list:
