@@ -1,0 +1,10 @@
+group: sorbian_dev
+task:
+  - hsbsc
+  - dsbsc
+aggregate_metric_list:
+  - metric: acc
+    aggregation: mean
+    weight_by_size: false
+metadata:
+  version: 0.0

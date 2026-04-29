@@ -1,0 +1,20 @@
+task: eng-ukr
+dataset_path: json
+dataset_name: null
+dataset_kwargs:
+  data_files:
+    test: llms-limited-resources2026-private/Ukrainian/MT/en-ukr_mt_dev.jsonl
+test_split: test
+doc_to_text: "Translate the following English text to Ukrainian. Put it in this format <ukr> Ukrainian translation </ukr>.\n<eng> {{en}} </eng>"
+doc_to_target: "{{en}}"
+filter_list:
+  - name: "remove_tags"
+    filter:
+      - function: "regex"
+        regex_pattern: "<ukr> (.*) </ukr>"
+      - function: "take_first"
+metric_list:
+  - metric: bleu
+  - metric: chrf++
+metadata:
+  version: 0.0

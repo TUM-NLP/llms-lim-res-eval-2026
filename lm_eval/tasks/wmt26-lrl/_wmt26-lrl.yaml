@@ -1,0 +1,10 @@
+group: wmt26-lrl
+task:
+  - sorbian_dev
+  - ukrainian_dev
+aggregate_metric_list:
+  - metric: acc
+    aggregation: mean
+    weight_by_size: false
+metadata:
+  version: 0.0
