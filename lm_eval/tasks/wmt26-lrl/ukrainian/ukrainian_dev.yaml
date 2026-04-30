@@ -3,8 +3,6 @@ task:
   - ukrsc
   - ces-ukr
   - eng-ukr
-  - ukrqa
-  - ukrmmlu
   - ukrmr
 aggregate_metric_list:
   - metric: acc
