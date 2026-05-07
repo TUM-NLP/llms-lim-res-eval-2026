@@ -1,4 +1,4 @@
-task: dsbsc
+task: ukrsc
 dataset_path: json
 dataset_name: null
 dataset_kwargs:
