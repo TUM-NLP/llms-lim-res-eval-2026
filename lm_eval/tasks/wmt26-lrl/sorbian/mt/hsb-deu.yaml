@@ -1,0 +1,22 @@
+task: hsb-deu
+dataset_path: json
+dataset_name: null
+dataset_kwargs:
+  data_files:
+    test: llms-limited-resources2026-private/Sorbian/MT/de-hsb_mt_dev.jsonl
+test_split: test
+doc_to_text: "Translate the following Upper Sorbian text to German. Put it in this format <deu> German translation </deu>.\n<hsb> {{hsb}} </hsb>"
+doc_to_target: "{{de}}"
+filter_list:
+  - name: "remove_tags"
+    filter:
+      - function: "regex"
+        regex_pattern: "<deu> (.*) </deu>"
+      - function: "take_first"
+metric_list:
+  - metric: bleu
+  - metric: !function lm_eval.tasks.wmt26-lrl.utils.chrf_pp
+    aggregation: chrf++
+    higher_is_better: true
+metadata:
+  version: 0.0
