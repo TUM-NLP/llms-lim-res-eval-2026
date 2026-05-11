@@ -1,0 +1,30 @@
+task: dsbmr
+dataset_path: json
+dataset_name: null
+dataset_kwargs:
+  data_files:
+    test: llms-limited-resources2026-private/Sorbian/MR/dsb_mr_dev.jsonl
+test_split: test
+doc_to_text: "Answer this mathematical reasoning question. Place your final answer, using LateX when appropriate, in this format: <answer> answer </answer>"
+doc_to_target: "{{answer}}"
+generation_kwargs:
+  until:
+    - "</answer>"
+    # - "\n"
+  max_gen_toks: 64
+  # temperature: 1
+  # top_p: 1.00
+  # top_k: 20
+  # min_p: 0.0
+  # presence_penalty: 2.0
+  # repetition_penalty: 1.0
+filter_list:
+  - name: "remove_tags"
+    filter:
+      - function: "regex"
+        regex_pattern: "<answer> (.*)"
+      - function: "take_first"
+metric_list:
+  - metric: chrf
+metadata:
+  version: 0.0

@@ -1,0 +1,30 @@
+group: hsbqa
+task:
+  - task: hsbqa-a1
+    process_docs: !function lm_eval.tasks.wmt26-lrl.utils.process_level_a1
+  - task: hsbqa-a2
+    process_docs: !function lm_eval.tasks.wmt26-lrl.utils.process_level_a2
+  - task: hsbqa-b1
+    process_docs: !function lm_eval.tasks.wmt26-lrl.utils.process_level_b1
+  - task: hsbqa-b2
+    process_docs: !function lm_eval.tasks.wmt26-lrl.utils.process_level_b2
+dataset_path: json
+dataset_kwargs:
+  data_files:
+    test: llms-limited-resources2026-private/Sorbian/QA/hsb_qa_dev.jsonl
+dataset_name: null
+test_split: test
+output_type: multiple_choice
+doc_to_text: "{{context.strip() if context else ''}}\n\nQuestion:\n{{question.strip() if question else ''}}\n\nPossible answers:\n{% for k, v in possible_answers|dictsort %}{{k}}: {{v}}\n{% endfor %}\nAnswer:"
+doc_to_choice: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"]
+doc_to_target: "{{(correct_answer_num|int)-1}}"
+metric_list:
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+aggregate_metric_list:
+  - metric: acc
+    aggregation: mean
+    weight_by_size: false
+metadata:
+  version: 0.0

@@ -1,12 +1,12 @@
-task: dsbsc
+task: hsbsc
 dataset_path: json
 dataset_name: null
 dataset_kwargs:
   data_files:  
-    test: llms-limited-resources2026-private/Sorbian/dsb/SC/DSB_sc_dev.jsonl
+    test: llms-limited-resources2026-private/Sorbian/SC/hsb_sc_dev.jsonl
     # test: https://raw.githubusercontent.com/TUM-NLP/llms-limited-resources2026-private/refs/heads/main/Sorbian/dsb/SC/DSB_sc_dev.jsonl?token=GHSAT0AAAAAADQADRFMDRL6Q6DHM7RVAA3K2PKJJPQ
 test_split: test
-doc_to_text: "Identify and correct the corrupted word in the sentence. The sentence could also be correct, in which case, output <wrong> CORRECT </wrong>, <corrected> CORRECT </corrected>. Put the answer in this format <wrong> wrong word </wrong>, <corrected> correct word </corrected>.\n<sentence> {{corrupted_sentence}} </sentence>"
+doc_to_text: "Identify and correct the corrupted word in the sentence. The sentence could also be correct, in which case, output <wrong> CORRECT </wrong>, <corrected> CORRECT </corrected>. Put the answer in this format <wrong> wrong word </wrong>, <corrected> correct word </corrected>.\n<sentence> {{input_sentence}} </sentence>"
 doc_to_target: "{{incorrect_word}}, {{correct_word}}"
 generation_kwargs:
   until:
@@ -23,10 +23,10 @@ filter_list:
   - name: "remove_tags"
     filter:
       - function: "regex"
-        regex_pattern: "<corrected> (.*)"
+        regex_pattern: "<wrong> (.*)"
       - function: "take_first"
 metric_list:
-  - metric: bleu
+  - metric: acc
   - metric: chrf
 metadata:
   version: 0.0
