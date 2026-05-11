@@ -19,7 +19,7 @@ generation_kwargs:
   # min_p: 0.0
   # presence_penalty: 2.0
   # repetition_penalty: 1.0
-process_results: !function sc_utils.process_results
+process_results: !function lm_eval.tasks.wmt26-lrl.utils.process_sc_results
 metric_list:
   - metric: exact_match_wrong
     aggregation: mean

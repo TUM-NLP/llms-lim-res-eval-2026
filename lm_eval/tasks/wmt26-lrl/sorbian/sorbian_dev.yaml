@@ -1,7 +1,17 @@
 group: sorbian_dev
 task:
+  - hsbqa
+  - dsbqa
   - hsbsc
   - dsbsc
+  - hsbmr
+  - dsbmr
+  - deu-hsb
+  - hsb-deu
+  - deu-dsb
+  - dsb-deu
+  - dsb-hsb
+  - hsb-dsb
 aggregate_metric_list:
   - metric: acc
     aggregation: mean
