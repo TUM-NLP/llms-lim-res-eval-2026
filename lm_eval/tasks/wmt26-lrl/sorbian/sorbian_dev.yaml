@@ -1,7 +1,5 @@
 group: sorbian_dev
 task:
-  - hsbqa
-  - dsbqa
   - hsbsc
   - dsbsc
   - hsbmr
