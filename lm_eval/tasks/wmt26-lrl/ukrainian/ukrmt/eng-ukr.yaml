@@ -7,14 +7,18 @@ dataset_kwargs:
 test_split: test
 doc_to_text: "Translate the following English text to Ukrainian. Put it in this format <ukr> Ukrainian translation </ukr>.\n<eng> {{en}} </eng>"
 doc_to_target: "{{en}}"
+generation_kwargs:
+  until:
+    - "</ukr>"
+  max_gen_toks: 1024
 filter_list:
   - name: "remove_tags"
     filter:
       - function: "regex"
-        regex_pattern: "<ukr> (.*) </ukr>"
+        regex_pattern: "<ukr> (.*)"
       - function: "take_first"
 metric_list:
   - metric: bleu
-  - metric: chrf++
+  - metric: chrf
 metadata:
   version: 0.0

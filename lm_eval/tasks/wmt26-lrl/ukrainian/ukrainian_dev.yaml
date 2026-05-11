@@ -4,6 +4,8 @@ task:
   - ces-ukr
   - eng-ukr
   - ukrmr
+  - ukrqa
+  - ukrmmlu
 aggregate_metric_list:
   - metric: acc
     aggregation: mean
