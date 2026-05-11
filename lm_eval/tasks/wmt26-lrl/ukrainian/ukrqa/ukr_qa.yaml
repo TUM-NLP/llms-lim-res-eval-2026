@@ -6,9 +6,9 @@ dataset_kwargs:
     test: llms-limited-resources2026-private/Ukrainian/QA/ukr_qa_dev.jsonl
 test_split: test
 output_type: multiple_choice
-doc_to_text: "Question:\n{{question.strip()}}\n\nPossible answers:\n{{possible_answers.strip()}}\n\nAnswer:"
-doc_to_choice: ["А", "Б", "В", "Г", "Д"]
-doc_to_target: "{{correct_answers}}"
+doc_to_text: "Question:\n{{question.strip()}}\n\nPossible answers:\n{% for k, v in possible_answers|dictsort %}{{k}}: {{v}}\n{% endfor %}\nAnswer:"
+doc_to_choice: ["0", "1", "2", "3", "4"]
+doc_to_target: "{{correct_answer_num}}"
 metric_list:
   - metric: acc
     aggregation: mean
