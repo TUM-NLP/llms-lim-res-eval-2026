@@ -15,6 +15,6 @@ filter_list:
       - function: "take_first"
 metric_list:
   - metric: bleu
-  - metric: chrf++
+  - metric: chrf
 metadata:
   version: 0.0
