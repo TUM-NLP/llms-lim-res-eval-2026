@@ -19,14 +19,13 @@ generation_kwargs:
   # min_p: 0.0
   # presence_penalty: 2.0
   # repetition_penalty: 1.0
-filter_list:
-  - name: "remove_tags"
-    filter:
-      - function: "regex"
-        regex_pattern: "<wrong> (.*)"
-      - function: "take_first"
+process_results: !function lm_eval.tasks.wmt26-lrl.utils.process_sc_results
 metric_list:
-  - metric: acc
-  - metric: chrf
+  - metric: exact_match_wrong
+    aggregation: mean
+    higher_is_better: true
+  - metric: exact_match_corrected
+    aggregation: mean
+    higher_is_better: true
 metadata:
   version: 0.0
