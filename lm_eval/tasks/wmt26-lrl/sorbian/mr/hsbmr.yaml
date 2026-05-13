@@ -5,24 +5,26 @@ dataset_kwargs:
   data_files:
     test: llms-limited-resources2026-private/Sorbian/MR/hsb_mr_dev.jsonl
 test_split: test
-doc_to_text: "Answer this mathematical reasoning question. Place your final answer, using LateX when appropriate, in this format: <answer> answer </answer>"
+doc_to_text: "Answer this mathematical reasoning question. Place your final answer, using LateX when appropriate, in this format: <answer> answer </answer> {{question}}"
 doc_to_target: "{{answer}}"
 generation_kwargs:
   until:
-    - "</answer>"
-    # - "\n"
-  max_gen_toks: 64
-  # temperature: 1
-  # top_p: 1.00
-  # top_k: 20
-  # min_p: 0.0
-  # presence_penalty: 2.0
-  # repetition_penalty: 1.0
+    - "<|endoftext|>"
+    - "<|im_end|>"
+    - "\n\n"
+  max_gen_toks: 4_096
+  temperature: 1
+  top_p: 0.95
+  top_k: 20
+  min_p: 0.0
+  presence_penalty: 1.5
+  repetition_penalty: 1.0
 filter_list:
   - name: "remove_tags"
     filter:
+      - function: "strip_thinking"
       - function: "regex"
-        regex_pattern: "<answer> (.*)"
+        regex_pattern: "<answer> (.*) </answer>"
       - function: "take_first"
 metric_list:
   - metric: chrf

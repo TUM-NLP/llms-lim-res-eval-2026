@@ -6,6 +6,25 @@ from lm_eval.api.filter import Filter
 from lm_eval.api.registry import register_filter
 
 
+@register_filter("strip_thinking")
+class StripThinkingFilter(Filter):
+    """Remove <think>...</think> / <thinking>...</thinking> blocks before further filtering.
+
+    No-op for models that don't produce thinking traces.
+    """
+
+    _PATTERN = re.compile(r"<think(?:ing)?>.*?</think(?:ing)?>", re.DOTALL | re.IGNORECASE)
+
+    def __init__(self) -> None:
+        pass
+
+    def apply(self, resps: list[list[str]], docs: list[dict]) -> list[list[str]]:
+        def filter_set(inst):
+            return [self._PATTERN.sub("", resp).strip() for resp in inst]
+
+        return [filter_set(resp) for resp in resps]
+
+
 @register_filter("regex")
 class RegexFilter(Filter):
     """A filter that extracts values from text using regex pattern matching.

@@ -6,16 +6,25 @@ dataset_kwargs:
     test: llms-limited-resources2026-private/Ukrainian/MT/en-ukr_mt_dev.jsonl
 test_split: test
 doc_to_text: "Translate the following English text to Ukrainian. Put it in this format <ukr> Ukrainian translation </ukr>.\n<eng> {{en}} </eng>"
-doc_to_target: "{{en}}"
+doc_to_target: "{{ukr}}"
 generation_kwargs:
   until:
-    - "</ukr>"
-  max_gen_toks: 1024
+    - "<|endoftext|>"
+    - "<|im_end|>"
+    - "\n\n"
+  max_gen_toks: 4_096
+  temperature: 1
+  top_p: 0.95
+  top_k: 20
+  min_p: 0.0
+  presence_penalty: 1.5
+  repetition_penalty: 1.0
 filter_list:
   - name: "remove_tags"
     filter:
+      - function: "strip_thinking"
       - function: "regex"
-        regex_pattern: "<ukr> (.*)"
+        regex_pattern: "<ukr> (.*) </ukr>"
       - function: "take_first"
 metric_list:
   - metric: bleu

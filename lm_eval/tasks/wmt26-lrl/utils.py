@@ -32,8 +32,7 @@ def process_level(dataset, level):
 def process_sc_results(doc, results):
     response = results[0]
     wrong_match = re.search(r"<wrong> (.*?) </wrong>", response)
-    # </corrected> is the generation stop token, so it won't appear in the response
-    corrected_match = re.search(r"<corrected> (.+)", response)
+    corrected_match = re.search(r"<corrected> (.*?) </corrected>", response)
     wrong_pred = wrong_match.group(1).strip() if wrong_match else ""
     corrected_pred = corrected_match.group(1).strip() if corrected_match else ""
     return {

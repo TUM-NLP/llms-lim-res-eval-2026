@@ -2,23 +2,28 @@ task: ukrsc
 dataset_path: json
 dataset_name: null
 dataset_kwargs:
-  data_files:  
+  data_files:
     test: llms-limited-resources2026-private/Ukrainian/SC/ukr_sc_dev.jsonl
-    # test: https://raw.githubusercontent.com/TUM-NLP/llms-limited-resources2026-private/refs/heads/main/Sorbian/dsb/SC/DSB_sc_dev.jsonl?token=GHSAT0AAAAAADQADRFMDRL6Q6DHM7RVAA3K2PKJJPQ
 test_split: test
 doc_to_text: "Identify and correct the corrupted word in the sentence. The sentence could also be correct, in which case, output <wrong> CORRECT </wrong>, <corrected> CORRECT </corrected>. Put the answer in this format <wrong> wrong word </wrong>, <corrected> correct word </corrected>.\n<sentence> {{input_sentence}} </sentence>"
 doc_to_target: "{{incorrect_word}}, {{correct_word}}"
 generation_kwargs:
   until:
-    - "</corrected>"
-    # - "\n"
-  max_gen_toks: 128
-  # temperature: 1
-  # top_p: 1.00
-  # top_k: 20
-  # min_p: 0.0
-  # presence_penalty: 2.0
-  # repetition_penalty: 1.0
+    - "<|endoftext|>"
+    - "<|im_end|>"
+    - "\n\n"
+  max_gen_toks: 4_096
+  temperature: 1
+  top_p: 0.95
+  top_k: 20
+  min_p: 0.0
+  presence_penalty: 1.5
+  repetition_penalty: 1.0
+filter_list:
+  - name: "none"
+    filter:
+      - function: "strip_thinking"
+      - function: "take_first"
 process_results: !function lm_eval.tasks.wmt26-lrl.utils.process_sc_results
 metric_list:
   - metric: exact_match_wrong

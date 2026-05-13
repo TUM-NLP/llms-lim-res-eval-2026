@@ -4,9 +4,5 @@ task:
   - ces-ukr
   - eng-ukr
   - ukrmr
-aggregate_metric_list:
-  - metric: acc
-    aggregation: mean
-    weight_by_size: false
 metadata:
   version: 0.0
