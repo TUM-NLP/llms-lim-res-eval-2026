@@ -2,6 +2,8 @@ group: sorbian_dev
 task:
   - hsbsc
   - dsbsc
+  - hsbgc
+  - dsbgc
   - hsbmr
   - dsbmr
   - deu-hsb

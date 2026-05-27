@@ -1,6 +1,7 @@
 group: ukrainian_dev
 task:
   - ukrsc
+  - ukrgc
   - ces-ukr
   - eng-ukr
   - ukrmr

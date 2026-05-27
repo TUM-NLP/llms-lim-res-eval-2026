@@ -1,11 +1,11 @@
-task: hsbsc
+task: ukrgc
 dataset_path: json
 dataset_name: null
 dataset_kwargs:
   data_files:
-    test: llms-limited-resources2026-private/Sorbian/SC/hsb_sc_dev.jsonl
+    test: llms-limited-resources2026-private/Ukrainian/GC/ukr_gc_dev.jsonl
 test_split: test
-doc_to_text: "The following sentence contains at most one misspelled word. Respond with exactly these two tags and nothing else:\n<wrong> misspelled word </wrong> <corrected> correct spelling </corrected>\nIf the sentence has no error, use the literal string CORRECT in both tags:\n<wrong> CORRECT </wrong> <corrected> CORRECT </corrected>\n<sentence> {{input_sentence}} </sentence>"
+doc_to_text: "The following sentence contains at most one grammatically incorrect word. Respond with exactly these two tags and nothing else:\n<wrong> incorrect word </wrong> <corrected> correct form </corrected>\nIf the sentence has no error, use the literal string CORRECT in both tags:\n<wrong> CORRECT </wrong> <corrected> CORRECT </corrected>\n<sentence> {{input_sentence}} </sentence>"
 doc_to_target: "{{incorrect_word}}, {{correct_word}}"
 generation_kwargs:
   until:

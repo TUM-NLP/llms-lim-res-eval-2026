@@ -4,6 +4,8 @@ task:
   - dsbqa
   - hsbsc
   - dsbsc
+  - hsbgc
+  - dsbgc
   - hsbmr
   - dsbmr
   - deu-hsb
