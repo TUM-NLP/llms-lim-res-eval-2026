@@ -12,9 +12,9 @@ generation_kwargs:
     - "<|endoftext|>"
     - "<|im_end|>"
     - "\n\n"
-  max_gen_toks: 4_096
+  max_gen_toks: 64
   temperature: 1
-  top_p: 0.95
+  top_p: 1.0
   top_k: 20
   min_p: 0.0
   repetition_penalty: 1.0
