@@ -23,7 +23,7 @@ filter_list:
     filter:
       - function: "strip_thinking"
       - function: "regex"
-        regex_pattern: "<ukr> (.*) </ukr>"
+        regex_pattern: "<uk[rр]?>\\s*([\\s\\S]*?)\\s*(?:</uk[rр]?>|$)"
       - function: "take_first"
 metric_list:
   - metric: bleu

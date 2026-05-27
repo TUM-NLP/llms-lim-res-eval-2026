@@ -11,7 +11,6 @@ generation_kwargs:
   until:
     - "<|endoftext|>"
     - "<|im_end|>"
-    - "\n\n"
   max_gen_toks: 4_096
   temperature: 1
   top_p: 0.95
@@ -23,7 +22,7 @@ filter_list:
     filter:
       - function: "strip_thinking"  
       - function: "regex"
-        regex_pattern: "<answer> (.*) </answer>"
+        regex_pattern: "<answer>\\s*(.*?)\\s*</answer>"
       - function: "take_first"
 metric_list:
   - metric: chrf

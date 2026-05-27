@@ -23,7 +23,7 @@ filter_list:
     filter:
       - function: "strip_thinking"
       - function: "regex"
-        regex_pattern: "<deu> (.*) </deu>"
+        regex_pattern: "<deu>\\s*([\\s\\S]*?)\\s*(?:</deu>|$)"
       - function: "take_first"
 metric_list:
   - metric: bleu

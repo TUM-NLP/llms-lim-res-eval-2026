@@ -23,7 +23,7 @@ filter_list:
     filter:
       - function: "strip_thinking"
       - function: "regex"
-        regex_pattern: "<dsb> (.*) </dsb>"
+        regex_pattern: "<dsb>\\s*([\\s\\S]*?)\\s*(?:</dsb>|$)"
       - function: "take_first"
 metric_list:
   - metric: bleu
