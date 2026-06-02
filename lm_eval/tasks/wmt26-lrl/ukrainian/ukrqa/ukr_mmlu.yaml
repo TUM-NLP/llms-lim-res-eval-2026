@@ -3,7 +3,7 @@ dataset_path: json
 dataset_name: null
 dataset_kwargs:
   data_files:
-    test: llms-limited-resources2026-private/Ukrainian/QA/ukr_mmlu_qa_dev.jsonl
+    test: llms-limited-resources2026/Ukrainian/QA/ukr_mmlu_qa_dev.jsonl
 test_split: test
 output_type: multiple_choice
 doc_to_text: "Question:\n{{question.strip()}}\n\nPossible answers:\n{% for k, v in possible_answers|dictsort %}{{k}}: {{v}}\n{% endfor %}\nAnswer:"

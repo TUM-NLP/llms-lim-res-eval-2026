@@ -11,7 +11,7 @@ task:
 dataset_path: json
 dataset_kwargs:
   data_files:
-    test: llms-limited-resources2026-private/Sorbian/QA/hsb_qa_dev.jsonl
+    test: llms-limited-resources2026/Sorbian/QA/hsb_qa_dev.jsonl
 dataset_name: null
 test_split: test
 output_type: multiple_choice

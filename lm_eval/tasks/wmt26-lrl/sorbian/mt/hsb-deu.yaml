@@ -3,7 +3,7 @@ dataset_path: json
 dataset_name: null
 dataset_kwargs:
   data_files:
-    test: llms-limited-resources2026-private/Sorbian/MT/de-hsb_mt_dev.jsonl
+    test: llms-limited-resources2026/Sorbian/MT/de-hsb_mt_dev.jsonl
 test_split: test
 doc_to_text: "Translate the following Upper Sorbian text to German. Put it in this format <deu> German translation </deu>.\n<hsb> {{hsb}} </hsb>"
 doc_to_target: "{{de}}"
