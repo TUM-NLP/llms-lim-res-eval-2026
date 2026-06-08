@@ -26,5 +26,6 @@ filter_list:
       - function: "take_first"
 metric_list:
   - metric: chrf
+  - metric: acc
 metadata:
   version: 0.0
