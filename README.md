@@ -55,20 +55,20 @@ For reference, here is the baseline output for Ukrainian:
 ```bash
 |  Tasks   |Version|  Filter   |n-shot|       Metric        |   | Value |   |Stderr|
 |----------|------:|-----------|-----:|---------------------|---|------:|---|------|
-| - ces-ukr|      0|remove_tags|     0|bleu                 |↑  |11.7627|±  |0.2807|
-|          |       |remove_tags|     0|chrf_pp              |↑  |34.0113|±  |   N/A|
-| - eng-ukr|      0|remove_tags|     0|bleu                 |↑  | 9.8457|±  |0.1882|
-|          |       |remove_tags|     0|chrf_pp              |↑  |30.8731|±  |   N/A|
-| - ukrgc  |      0|none       |     0|exact_match_corrected|↑  | 0.0265|±  |0.0036|
-|          |       |none       |     0|exact_match_wrong    |↑  | 0.0390|±  |0.0043|
-| - ukrmr  |      0|remove_tags|     0|chrf                 |↑  | 2.7944|±  |1.2714|
-| - ukrsc  |      0|none       |     0|exact_match_corrected|↑  | 0.1765|±  |0.0085|
-|          |       |none       |     0|exact_match_wrong    |↑  | 0.1705|±  |0.0084|
+| - ces-ukr|      0|remove_tags|     0|bleu                 |↑  |11.8923|±  |0.2858|
+|          |       |remove_tags|     0|chrf_pp              |↑  |34.1566|±  |   N/A|
+| - eng-ukr|      0|remove_tags|     0|bleu                 |↑  | 9.8272|±  |0.1868|
+|          |       |remove_tags|     0|chrf_pp              |↑  |30.7793|±  |   N/A|
+| - ukrsc  |      0|none       |     0|exact_match_corrected|↑  | 0.1725|±  |0.0085|
+|          |       |none       |     0|exact_match_wrong    |↑  | 0.1745|±  |0.0085|
+| - ukrgc  |      0|none       |     0|exact_match_corrected|↑  | 0.0255|±  |0.0035|
+|          |       |none       |     0|exact_match_wrong    |↑  | 0.0425|±  |0.0045|
+| - ukrmr  |      0|remove_tags|     0|exact_match          |↑  | 0.1250|±  |0.0690|
 
 | Tasks |Version|Filter|n-shot|Metric|   |Value |   |Stderr|
 |-------|------:|------|-----:|------|---|-----:|---|-----:|
-|ukrmmlu|      0|none  |     0|acc   |↑  |0.4596|±  |0.0296|
-|ukrqa  |      0|none  |     0|acc   |↑  |0.3002|±  |0.0185|
+|ukrqa  |      0|none  |     0|acc   |↑  |0.2985|±  |0.0185|
+|ukrmmlu|      0|none  |     0|acc   |↑  |0.4561|±  |0.0296|
 
 
 ```
