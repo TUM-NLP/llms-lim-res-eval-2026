@@ -1,0 +1,8 @@
+group: wmt26-lrl_test
+task:
+  - sorbian_test
+  - ukrainian_test
+  - sorbian_qa_test
+  - ukrainian_qa_test
+metadata:
+  version: 0.0

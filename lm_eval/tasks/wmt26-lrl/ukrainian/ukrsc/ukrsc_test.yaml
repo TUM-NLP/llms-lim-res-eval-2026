@@ -1,0 +1,34 @@
+task: ukrsc_test
+dataset_path: json
+dataset_name: null
+dataset_kwargs:
+  data_files:
+    test: llms-limited-resources2026/Ukrainian/SC/ukr_sc_test.jsonl
+test_split: test
+doc_to_text: "The following sentence contains at most one misspelled word. Respond with exactly these two tags and nothing else:\n<wrong> misspelled word </wrong> <corrected> correct spelling </corrected>\nIf the sentence has no error, use the literal string CORRECT in both tags:\n<wrong> CORRECT </wrong> <corrected> CORRECT </corrected>\n<sentence> {{input_sentence}} </sentence>"
+doc_to_target: "{{incorrect_word}}, {{correct_word}}"
+generation_kwargs:
+  until:
+    - "<|endoftext|>"
+    - "<|im_end|>"
+  max_gen_toks: 64
+  temperature: 1
+  top_p: 1.0
+  top_k: 20
+  min_p: 0.0
+  repetition_penalty: 1.0
+filter_list:
+  - name: "none"
+    filter:
+      - function: "strip_thinking"
+      - function: "take_first"
+process_results: !function lm_eval.tasks.wmt26-lrl.utils.process_sc_results
+metric_list:
+  - metric: exact_match_wrong
+    aggregation: mean
+    higher_is_better: true
+  - metric: exact_match_corrected
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 0.0

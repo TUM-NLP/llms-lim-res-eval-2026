@@ -1,0 +1,6 @@
+group: sorbian_qa_test
+task:
+  - hsbqa_test
+  - dsbqa_test
+metadata:
+  version: 0.0

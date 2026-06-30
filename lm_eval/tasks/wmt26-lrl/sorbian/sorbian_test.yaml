@@ -1,0 +1,16 @@
+group: sorbian_test
+task:
+  - hsbsc_test
+  - dsbsc_test
+  - hsbgc_test
+  - dsbgc_test
+  - hsbmr_test
+  - dsbmr_test
+  - deu-hsb_test
+  - hsb-deu_test
+  - deu-dsb_test
+  - dsb-deu_test
+  - dsb-hsb_test
+  - hsb-dsb_test
+metadata:
+  version: 0.0

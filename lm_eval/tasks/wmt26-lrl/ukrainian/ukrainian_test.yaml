@@ -1,0 +1,9 @@
+group: ukrainian_test
+task:
+  - ukrsc_test
+  - ukrgc_test
+  - ces-ukr_test
+  - eng-ukr_test
+  - ukrmr_test
+metadata:
+  version: 0.0

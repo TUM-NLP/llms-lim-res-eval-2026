@@ -1,0 +1,6 @@
+group: ukrainian_qa_test
+task:
+  - ukrqa_test
+  - ukrmmlu_test
+metadata:
+  version: 0.0

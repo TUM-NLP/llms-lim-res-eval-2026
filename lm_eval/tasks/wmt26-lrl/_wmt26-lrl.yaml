@@ -1,4 +1,4 @@
-group: wmt26-lrl
+group: wmt26-lrl_dev
 task:
   - sorbian_dev
   - ukrainian_dev
