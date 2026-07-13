@@ -9,7 +9,7 @@ task:
   - task: hsbqa_test-b2
     process_docs: !function lm_eval.tasks.wmt26-lrl.utils.process_level_b2
   - task: hsbqa_test-c1
-    process_docs: !function lm_eval.tasks.wmt26-lrl-utils.process_level_c1
+    process_docs: !function lm_eval.tasks.wmt26-lrl.utils.process_level_c1
 dataset_path: json
 dataset_kwargs:
   data_files:
