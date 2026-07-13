@@ -25,9 +25,32 @@ Then clone the data repository into the root folder:
 git clone https://github.com/TUM-NLP/llms-limited-resources2026
 ```
 
-## Running the baselines
+## Evaluating on test sets
 
-The following commands were used to run the baselines:
+The following commands were used to run the test baselines.
+Note the `--predict_only` flag, and the correct task groups.
+
+```bash
+# generative tasks
+python3 -m lm_eval --model hf \
+    --model_args pretrained=Qwen/Qwen3.5-2B,enable_thinking=False --apply_chat_template \
+    --tasks ukrainian_test sorbian_test \
+    --device cuda:0 --batch_size auto \
+    --output_path baseline_output --log_samples \
+    --predict_only
+    
+# qa tasks (loglikelihood-based evaluation)
+python3 -m lm_eval --model hf \
+    --model_args pretrained=Qwen/Qwen3.5-2B \
+    --tasks ukrainian_qa_test sorbian_qa_test \
+    --device cuda:0 --batch_size auto \
+    --output_path baseline_output --log_samples\
+    --predict_only
+```
+
+## Running the dev baselines
+
+The following commands were used to run the development baselines:
 
 ```bash
 # generative tasks
