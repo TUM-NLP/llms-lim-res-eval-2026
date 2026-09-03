@@ -1,7 +1,8 @@
 """Build LaTeX tables of average xCOMET scores per team for the Ukrainian and
 Sorbian tracks, with a WMT-style significance-cluster rank per direction:
 rank(team) = 1 + number of other teams whose mean is significantly higher
-(paired t-test, p < 0.05) in that direction's results.json.
+(paired t-test, p < 0.05, Holm-Bonferroni corrected within each direction's
+family of pairwise tests).
 
 Reads: <dir>/<direction>.results.json for each direction below.
 Writes: xcomet_ukrainian_table.tex, xcomet_sorbian_table.tex in the same dir.
@@ -27,11 +28,25 @@ TRACKS = {
 }
 
 
+def holm_bonferroni(p_values, alpha=ALPHA):
+    """Step-down Holm-Bonferroni correction. Returns a bool array of rejections."""
+    m = len(p_values)
+    order = sorted(range(m), key=lambda i: p_values[i])
+    reject = [False] * m
+    for rank, i in enumerate(order):
+        if p_values[i] <= alpha / (m - rank):
+            reject[i] = True
+        else:
+            break  # step-down: stop at first non-rejection
+    return reject
+
+
 def load_direction(direction):
     """Return {team: mean} and {team: rank} for one direction.
 
     rank(team) = 1 + number of other teams that are significantly better
-    (paired t-test, p < ALPHA, and higher mean) than team.
+    (paired t-test, Holm-Bonferroni corrected p < ALPHA, and higher mean)
+    than team, correcting across all pairwise tests run for this direction.
     """
     path = RESULTS_DIR / f"{direction}.results.json"
     data = json.loads(path.read_text())
@@ -39,7 +54,11 @@ def load_direction(direction):
     means = {}
     beaten_by = {}  # team -> set of teams significantly better than it
 
-    for pair in data["results"]:
+    pairs = data["results"]
+    p_values = [pair["paired_t-test"]["p_value"] for pair in pairs]
+    significant = holm_bonferroni(p_values)
+
+    for pair, is_significant in zip(pairs, significant):
         x_name, y_name = pair["x_name"], pair["y_name"]
         x_mean = pair["bootstrap_resampling"]["x-mean"]
         y_mean = pair["bootstrap_resampling"]["y-mean"]
@@ -48,8 +67,7 @@ def load_direction(direction):
         beaten_by.setdefault(x_name, set())
         beaten_by.setdefault(y_name, set())
 
-        p_value = pair["paired_t-test"]["p_value"]
-        if p_value >= ALPHA:
+        if not is_significant:
             continue
         if x_mean > y_mean:
             beaten_by[y_name].add(x_name)
@@ -124,8 +142,9 @@ def build_table(track_name, track):
     lines.append(
         r"\caption{%s The rank columns give the significance-cluster rank "
         r"per direction: rank $k$ means $k-1$ teams are significantly "
-        r"better (paired $t$-test, $p < %.2f$); tied ranks are not "
-        r"significantly different from each other.}"
+        r"better (paired $t$-test, $p < %.2f$, Holm-Bonferroni corrected "
+        r"within each direction); tied ranks are not significantly "
+        r"different from each other.}"
         % (track["caption"], ALPHA)
     )
     lines.append(r"\label{%s}" % track["label"])
