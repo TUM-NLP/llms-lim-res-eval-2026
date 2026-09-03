@@ -1,7 +1,7 @@
 """Build LaTeX tables of average xCOMET scores per team for the Ukrainian and
-Sorbian tracks, marking teams that are statistically significantly better
-than the TUM_baseline team (paired t-test, p < 0.05, on the paired samples
-underlying each results.json file).
+Sorbian tracks, with a WMT-style significance-cluster rank per direction:
+rank(team) = 1 + number of other teams whose mean is significantly higher
+(paired t-test, p < 0.05) in that direction's results.json.
 
 Reads: <dir>/<direction>.results.json for each direction below.
 Writes: xcomet_ukrainian_table.tex, xcomet_sorbian_table.tex in the same dir.
@@ -11,7 +11,6 @@ import json
 from pathlib import Path
 
 RESULTS_DIR = Path(__file__).resolve().parent / "xcomet_ukr_results"
-BASELINE = "TUM_baseline"
 ALPHA = 0.05
 
 TRACKS = {
@@ -29,12 +28,16 @@ TRACKS = {
 
 
 def load_direction(direction):
-    """Return {team: mean} and {team: significantly_better_than_baseline} for one direction."""
+    """Return {team: mean} and {team: rank} for one direction.
+
+    rank(team) = 1 + number of other teams that are significantly better
+    (paired t-test, p < ALPHA, and higher mean) than team.
+    """
     path = RESULTS_DIR / f"{direction}.results.json"
     data = json.loads(path.read_text())
 
     means = {}
-    better_than_baseline = {}
+    beaten_by = {}  # team -> set of teams significantly better than it
 
     for pair in data["results"]:
         x_name, y_name = pair["x_name"], pair["y_name"]
@@ -42,29 +45,33 @@ def load_direction(direction):
         y_mean = pair["bootstrap_resampling"]["y-mean"]
         means[x_name] = x_mean
         means[y_name] = y_mean
+        beaten_by.setdefault(x_name, set())
+        beaten_by.setdefault(y_name, set())
 
-        if BASELINE not in (x_name, y_name):
-            continue
-        team = y_name if x_name == BASELINE else x_name
-        team_mean = y_mean if x_name == BASELINE else x_mean
-        baseline_mean = x_mean if x_name == BASELINE else y_mean
         p_value = pair["paired_t-test"]["p_value"]
-        better_than_baseline[team] = p_value < ALPHA and team_mean > baseline_mean
+        if p_value >= ALPHA:
+            continue
+        if x_mean > y_mean:
+            beaten_by[y_name].add(x_name)
+        elif y_mean > x_mean:
+            beaten_by[x_name].add(y_name)
 
-    return means, better_than_baseline
+    ranks = {team: 1 + len(better) for team, better in beaten_by.items()}
+    return means, ranks
 
 
 def escape(text):
     return text.replace("_", r"\_")
 
 
-def format_cell(mean, is_better):
+def format_score(mean):
     if mean is None:
         return "--"
-    cell = f"{mean * 100:.2f}"
-    if is_better:
-        cell = r"$^{*}$" + cell
-    return cell
+    return f"{mean * 100:.2f}"
+
+
+def format_rank(rank):
+    return "--" if rank is None else str(rank)
 
 
 def build_table(track_name, track):
@@ -81,8 +88,13 @@ def build_table(track_name, track):
 
     ordered_teams = sorted(teams, key=avg_for, reverse=True)
 
-    col_spec = "l" + "c" * len(directions) + "c"
-    header = " & ".join(["Team"] + [escape(d) for d in directions] + ["avg"])
+    col_spec = "l" + "cc" * len(directions) + "c"
+    header_cols = ["Team"]
+    for d in directions:
+        header_cols.append(escape(d))
+        header_cols.append("rank")
+    header_cols.append("avg")
+    header = " & ".join(header_cols)
 
     lines = []
     lines.append(r"\begin{table}[t]")
@@ -96,22 +108,25 @@ def build_table(track_name, track):
         row_cells = [escape(team)]
         direction_means = []
         for direction in directions:
-            means, better = per_direction[direction]
+            means, ranks = per_direction[direction]
             mean = means.get(team)
-            is_better = better.get(team, False)
-            row_cells.append(format_cell(mean, is_better))
+            rank = ranks.get(team)
+            row_cells.append(format_score(mean))
+            row_cells.append(format_rank(rank))
             if mean is not None:
                 direction_means.append(mean)
         avg = sum(direction_means) / len(direction_means) if direction_means else None
-        row_cells.append(format_cell(avg, False))
+        row_cells.append(format_score(avg))
         lines.append(" & ".join(row_cells) + r" \\")
 
     lines.append(r"\bottomrule")
     lines.append(r"\end{tabular}")
     lines.append(
-        r"\caption{%s $^{*}$~indicates a statistically significant improvement "
-        r"over the %s baseline (paired $t$-test, $p < %.2f$).}"
-        % (track["caption"], escape(BASELINE), ALPHA)
+        r"\caption{%s The rank columns give the significance-cluster rank "
+        r"per direction: rank $k$ means $k-1$ teams are significantly "
+        r"better (paired $t$-test, $p < %.2f$); tied ranks are not "
+        r"significantly different from each other.}"
+        % (track["caption"], ALPHA)
     )
     lines.append(r"\label{%s}" % track["label"])
     lines.append(r"\end{table}")
