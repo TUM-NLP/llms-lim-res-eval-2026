@@ -30,10 +30,14 @@ from scipy import stats
 
 from wmt_st_submission_extraction import TASK_GOLD_DICT, extract_file, extract_subtask
 
-# Only the Ukrainian MT subtasks are in scope for this script.
-UKR_MT_TASK = "ukr-mt"
-UKR_MT_SUBTASKS = ("cs-uk", "en-uk")
-
+TRACK_TO_SUBTASKS = {
+    "ukr": ("cs-uk", "en-uk"),
+    "sb": ("hsb-de", "dsb-de")
+}
+TRACK_TO_REF_COLUMN = {
+    "ukr": "ukr",
+    "sb": "de"
+}
 
 def parse_args() -> argparse.Namespace:
     """Parse and return the CLI arguments for this script."""
@@ -49,6 +53,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--gold-dir", type=str, required=True,
         help="Parent folder of the Ukrainian MT gold test files.",
+    )
+    parser.add_argument(
+        "--lang-track", type=str, default="ukr", choices=["ukr", "sb"],
+        help="Language track to look at."
     )
     parser.add_argument(
         "--comet-model", type=str, default="Unbabel/XCOMET-XXL",
@@ -80,16 +88,18 @@ def build_submission_dict(teams_json_path: str) -> dict[str, dict[str, str]]:
     }
 
 
-def load_team_ukr_mt_predictions(
+def load_team_mt_predictions(
     team_name: str,
     submission_dict: dict[str, dict[str, str]],
     submissions_dir: str,
+    lang_track: str,
 ) -> Optional[dict[str, pd.DataFrame]]:
     """Read one team's Ukrainian MT file and split it into {subtask: df} via extract_subtask.
 
     Returns None if the team did not submit the Ukrainian MT task.
     """
-    file_name = submission_dict[team_name].get(UKR_MT_TASK)
+    print(submission_dict)
+    file_name = submission_dict[team_name].get(f"{lang_track}-mt")
     if file_name is None:
         return None
     file_path = os.path.join(submissions_dir, file_name)
@@ -97,22 +107,20 @@ def load_team_ukr_mt_predictions(
     return extract_subtask(aggregated_df)
 
 
-def load_gold_ukr_mt(gold_dir: str) -> dict[str, pd.DataFrame]:
-    """Read the cs-uk and en-uk gold files, keyed by subtask name.
-
+def load_gold_mt(gold_dir: str, track: str) -> dict[str, pd.DataFrame]:
+    """Read the subtask gold files.
     Gold file names are taken from TASK_GOLD_DICT (basename only) so the
-    expected naming convention lives in one place, joined with the
-    caller-supplied gold_dir instead of the hard-coded folder in that dict.
+    expected naming convention lives in one place.
     """
     gold = {}
-    for subtask in UKR_MT_SUBTASKS:
+    for subtask in TRACK_TO_SUBTASKS[track]:
         file_name = os.path.basename(TASK_GOLD_DICT[subtask])
         gold[subtask] = pd.read_json(os.path.join(gold_dir, file_name), lines=True)
     return gold
 
 
 def build_comet_input(
-    pred_df: pd.DataFrame, gold_df: pd.DataFrame, src_lang: str
+    pred_df: pd.DataFrame, gold_df: pd.DataFrame, src_lang: str, track: str
 ) -> list[dict[str, str]]:
     """Merge a team's predictions with gold on sent_id and format for COMET.
 
@@ -123,8 +131,9 @@ def build_comet_input(
     assert len(merged) == len(gold_df), (
         f"sent_id mismatch between predictions and gold: {len(merged)} vs {len(gold_df)}"
     )
+    ref_column = TRACK_TO_REF_COLUMN[track]
     return [
-        {"src": row[src_lang], "mt": row["pred"], "ref": row["ukr"]}
+        {"src": row[src_lang], "mt": row["pred"], "ref": row[ref_column]}
         for _, row in merged.iterrows()
     ]
 
@@ -255,18 +264,19 @@ def main() -> None:
         model = load_from_checkpoint(checkpoint_path)
 
     submission_dict = build_submission_dict(args.teams_json)
-    gold = load_gold_ukr_mt(args.gold_dir)
+    track = args.lang_track
+    gold = load_gold_mt(args.gold_dir, track)
 
-    for subtask in UKR_MT_SUBTASKS:
+    for subtask in TRACK_TO_SUBTASKS[track]:
         src_lang = subtask.split("-")[0]
         gold_df = gold[subtask]
 
         team_inputs = {}
         for team_name in submission_dict:
-            subtask_dfs = load_team_ukr_mt_predictions(team_name, submission_dict, args.submissions_dir)
+            subtask_dfs = load_team_mt_predictions(team_name, submission_dict, args.submissions_dir, track)
             if subtask_dfs is None or subtask not in subtask_dfs:
                 continue
-            team_inputs[team_name] = build_comet_input(subtask_dfs[subtask], gold_df, src_lang)
+            team_inputs[team_name] = build_comet_input(subtask_dfs[subtask], gold_df, src_lang, track)
 
         print(f"[{subtask}] scoring {len(team_inputs)} teams: {list(team_inputs)}")
         model_outputs = score_team_submissions(
