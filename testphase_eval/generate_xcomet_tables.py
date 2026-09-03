@@ -61,9 +61,9 @@ def escape(text):
 def format_cell(mean, is_better):
     if mean is None:
         return "--"
-    cell = f"{mean:.3f}"
+    cell = f"{mean * 100:.2f}"
     if is_better:
-        cell += r"$^{*}$"
+        cell = r"$^{*}$" + cell
     return cell
 
 
@@ -74,12 +74,15 @@ def build_table(track_name, track):
     teams = set()
     for means, _ in per_direction.values():
         teams.update(means)
-    teams.discard(BASELINE)
-    teams = sorted(teams)
-    ordered_teams = [BASELINE] + teams
+
+    def avg_for(team):
+        vals = [means[team] for means, _ in per_direction.values() if team in means]
+        return sum(vals) / len(vals) if vals else float("-inf")
+
+    ordered_teams = sorted(teams, key=avg_for, reverse=True)
 
     col_spec = "l" + "c" * len(directions) + "c"
-    header = " & ".join(["Team"] + [escape(d) for d in directions] + ["Average"])
+    header = " & ".join(["Team"] + [escape(d) for d in directions] + ["avg"])
 
     lines = []
     lines.append(r"\begin{table}[t]")
